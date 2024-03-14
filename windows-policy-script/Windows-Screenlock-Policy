@@ -1,0 +1,21 @@
+# specify the desired screen lock timeout in seconds (5 minutes = 300 seconds)
+$DesiredTimeout = 300
+
+# check if the registry key "InactivityTimeoutSecs" exists
+if (-not (Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\InactivityTimeoutSecs")) {
+    # Set the screen lock timeout in the local machine registry
+    Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "InactivityTimeoutSecs" -Value $DesiredTimeout
+
+    # apply the changes immediately
+    RUNDLL32.EXE user32.dll,UpdatePerUserSystemParameters
+
+    # write a message indicating that the screen lock policy timeout was enforced successfully
+    if ($DesiredTimeout -eq (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "InactivityTimeoutSecs").InactivityTimeoutSecs) {
+        Write-Host "Screen lock policy timeout policy is enforced successfully."
+    } else {
+        Write-Host "Failed to enforce screen lock policy timeout policy."
+    }
+} else {
+    Write-Host "Screen lock policy timeout policy already exists. The script was not executed."
+}
+Ninja-Property-Set screenlockpolicy 1 

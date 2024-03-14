@@ -1,0 +1,13 @@
+# Check if BitLocker is enabled on the C: drive.
+$driveLetter = "C:"
+$bitLockerStatus = Get-BitLockerVolume -MountPoint $driveLetter
+
+if ($bitLockerStatus.ProtectionStatus -ne "On") {
+    # BitLocker is not enabled, so enable it.
+    Enable-BitLocker -MountPoint $driveLetter -EncryptionMethod XtsAes256 -UsedSpaceOnly -RecoveryPasswordProtector
+    Write-Host "BitLocker has been enabled on drive $driveLetter."
+} else {
+    # BitLocker is already enabled.
+    Write-Host "BitLocker is already enabled on drive $driveLetter. No changes made."
+}
+Ninja-Property-Set bitlockerencryption 1
